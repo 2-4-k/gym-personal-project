@@ -1,66 +1,135 @@
-"""
-Volume-weighted muscle recovery calculation.
-
-For each muscle group, find the most recent workout sets that hit it,
-compute a fatigue score from volume x intensity, and use that to scale
-the recovery window up or down from the muscle's base recovery time.
-"""
-
-from datetime import datetime
-from app.models import MuscleGroup, WorkoutSet, ExerciseMuscleGroup, WorkoutSession
+from flask import Blueprint, g, jsonify, request
 from app import db
+from app.auth import login_required
+from app.models import Exercise, ExerciseMuscleGroup, MuscleGroup, WorkoutSession, WorkoutSet
+from app.recovery import get_all_muscle_status
+from app.stats import estimate_session_calories, get_personal_records, get_user_stats
 
-MIN_MULTIPLIER = 0.5
-MAX_MULTIPLIER = 2.0
+bp = Blueprint("api", __name__)
 
 
-def get_muscle_group_status(muscle_group: MuscleGroup):
-    """
-    Returns a dict describing whether this muscle group is ready to train,
-    and how many hours remain until it is.
-    """
-    recent_sets = (
-        db.session.query(WorkoutSet, ExerciseMuscleGroup, WorkoutSession)
-        .join(ExerciseMuscleGroup, WorkoutSet.exercise_id == ExerciseMuscleGroup.exercise_id)
-        .join(WorkoutSession, WorkoutSet.session_id == WorkoutSession.id)
-        .filter(ExerciseMuscleGroup.muscle_group_id == muscle_group.id)
+@bp.route("/muscle-status", methods=["GET"])
+@login_required
+def muscle_status():
+    return jsonify(get_all_muscle_status(g.current_user))
+
+
+@bp.route("/exercises", methods=["GET"])
+@login_required
+def list_exercises():
+    exercises = Exercise.query.order_by(Exercise.name).all()
+    return jsonify([e.to_dict() for e in exercises])
+
+
+@bp.route("/exercises", methods=["POST"])
+@login_required
+def create_exercise():
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    category = (data.get("category") or "").strip() or None
+    muscle_groups = data.get("muscle_groups", [])
+
+    if not name:
+        return jsonify({"error": "Exercise name is required"}), 400
+    if Exercise.query.filter_by(name=name).first() is not None:
+        return jsonify({"error": "An exercise with that name already exists"}), 409
+
+    exercise = Exercise(name=name, category=category)
+    db.session.add(exercise)
+    db.session.flush()
+
+    for mg in muscle_groups:
+        db.session.add(
+            ExerciseMuscleGroup(
+                exercise_id=exercise.id,
+                muscle_group_id=mg["muscle_group_id"],
+                intensity=mg.get("intensity", 1.0),
+            )
+        )
+
+    db.session.commit()
+    return jsonify(exercise.to_dict()), 201
+
+
+@bp.route("/muscle-groups", methods=["GET"])
+@login_required
+def list_muscle_groups():
+    groups = MuscleGroup.query.all()
+    return jsonify([group.to_dict() for group in groups])
+
+
+@bp.route("/sessions", methods=["POST"])
+@login_required
+def log_session():
+    data = request.get_json(silent=True) or {}
+    sets = data.get("sets", [])
+
+    if not sets:
+        return jsonify({"error": "At least one set is required"}), 400
+
+    session = WorkoutSession(
+        user_id=g.current_user.id,
+        notes=data.get("notes"),
+        duration_minutes=data.get("duration_minutes"),
+    )
+    db.session.add(session)
+    db.session.flush()
+
+    for s in sets:
+        workout_set = WorkoutSet(
+            session_id=session.id,
+            exercise_id=s["exercise_id"],
+            reps=s["reps"],
+            weight=s["weight"],
+            rpe=s.get("rpe"),
+        )
+        db.session.add(workout_set)
+
+    db.session.commit()
+    return jsonify({"id": session.id}), 201
+
+
+@bp.route("/sessions", methods=["GET"])
+@login_required
+def list_sessions():
+    sessions = (
+        WorkoutSession.query.filter_by(user_id=g.current_user.id)
         .order_by(WorkoutSession.session_date.desc())
         .all()
     )
-
-    if not recent_sets:
-        return {
-            "muscle_group_id": muscle_group.id,
-            "name": muscle_group.name,
-            "ready": True,
-            "hours_remaining": 0,
-            "last_trained": None,
-        }
-
-    latest_session_date = recent_sets[0][2].session_date
-    same_session_sets = [
-        (ws, emg) for ws, emg, sess in recent_sets if sess.session_date == latest_session_date
-    ]
-
-    fatigue = sum(ws.reps * ws.weight * emg.intensity for ws, emg in same_session_sets)
-
-    multiplier = fatigue / muscle_group.reference_volume if muscle_group.reference_volume else 1.0
-    multiplier = max(MIN_MULTIPLIER, min(MAX_MULTIPLIER, multiplier))
-
-    recovery_hours_needed = muscle_group.base_recovery_hours * multiplier
-
-    hours_since = (datetime.utcnow() - latest_session_date).total_seconds() / 3600
-    hours_remaining = max(0, recovery_hours_needed - hours_since)
-
-    return {
-        "muscle_group_id": muscle_group.id,
-        "name": muscle_group.name,
-        "ready": hours_remaining <= 0,
-        "hours_remaining": round(hours_remaining, 1),
-        "last_trained": latest_session_date.isoformat(),
-    }
+    return jsonify(
+        [
+            {
+                "id": s.id,
+                "session_date": s.session_date.isoformat(),
+                "notes": s.notes,
+                "duration_minutes": s.duration_minutes,
+                "calories_burned": estimate_session_calories(s, g.current_user),
+                "sets": [
+                    {
+                        "exercise_id": ws.exercise_id,
+                        "exercise_name": ws.exercise.name,
+                        "reps": ws.reps,
+                        "weight": ws.weight,
+                        "rpe": ws.rpe,
+                    }
+                    for ws in s.sets
+                ],
+            }
+            for s in sessions
+        ]
+    )
 
 
-def get_all_muscle_status():
-    groups = MuscleGroup.query.all()
-    return [get_muscle_group_status(g) for g in groups]
+@bp.route("/stats", methods=["GET"])
+@login_required
+def stats():
+    sessions = WorkoutSession.query.filter_by(user_id=g.current_user.id).all()
+    return jsonify(get_user_stats(g.current_user, sessions))
+
+
+@bp.route("/progress", methods=["GET"])
+@login_required
+def progress():
+    sessions = WorkoutSession.query.filter_by(user_id=g.current_user.id).all()
+    return jsonify(get_personal_records(sessions))

@@ -2,6 +2,33 @@ from app import db
 from datetime import datetime
 
 
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(100))
+    bodyweight_lbs = db.Column(db.Float, nullable=False)
+    height_inches = db.Column(db.Float, nullable=False)
+    sex = db.Column(db.String(20), nullable=False)
+    training_experience = db.Column(db.String(20), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    sessions = db.relationship("WorkoutSession", backref="user", cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "name": self.name,
+            "bodyweight_lbs": self.bodyweight_lbs,
+            "height_inches": self.height_inches,
+            "sex": self.sex,
+            "training_experience": self.training_experience,
+        }
+
+
 class MuscleGroup(db.Model):
     __tablename__ = "muscle_groups"
 
@@ -54,7 +81,9 @@ class WorkoutSession(db.Model):
     __tablename__ = "workout_sessions"
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     session_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    duration_minutes = db.Column(db.Integer)
     notes = db.Column(db.Text)
 
     sets = db.relationship("WorkoutSet", backref="session", cascade="all, delete-orphan")

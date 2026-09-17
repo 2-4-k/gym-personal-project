@@ -1,0 +1,527 @@
+.app-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--color-text);
+}
+
+.app-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+}
+
+.status-text {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 80px;
+}
+
+.status-text.error {
+  color: var(--color-danger);
+}
+
+.ready-banner {
+  background: var(--color-card-bg);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 28px 0;
+}
+
+.ready-label {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 10px;
+}
+
+.ready-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.pill.muted {
+  background: var(--color-muted-pill-bg);
+  color: var(--color-text-muted);
+}
+
+.section-label {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 10px;
+}
+
+.muscle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.muscle-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.muscle-name {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.muscle-status {
+  font-size: 13px;
+  margin: 0;
+}
+
+.muscle-card.ready .muscle-status {
+  color: var(--color-accent);
+}
+
+.muscle-card.recovering .muscle-status {
+  color: var(--color-warning);
+}
+
+/* Nav bar */
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 24px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.nav-link.active {
+  color: var(--color-text);
+  background: var(--color-card-bg);
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-email {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.nav-email:hover {
+  color: var(--color-text);
+}
+
+.nav-logout {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.nav-logout:hover {
+  background: var(--color-card-bg);
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--color-text);
+  background: var(--color-card-bg);
+}
+
+/* Auth pages */
+
+.auth-shell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 24px;
+}
+
+.auth-shell .theme-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+
+.auth-card {
+  background: var(--color-card-bg);
+  border-radius: 14px;
+  padding: 32px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-card h1 {
+  font-size: 22px;
+  color: var(--color-text);
+  margin: 0 0 8px;
+}
+
+.auth-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.auth-switch {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.auth-switch a {
+  color: var(--color-accent);
+}
+
+/* Form controls */
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input,
+select,
+textarea {
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid var(--color-accent);
+}
+
+input:disabled {
+  opacity: 0.6;
+}
+
+button[type="submit"],
+.auth-card button[type="submit"] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  margin: -4px 0 0;
+  line-height: 1.4;
+}
+
+.height-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-success {
+  color: var(--color-accent);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Stats row */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.stat-tile {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* Progress / personal records */
+
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.record-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin: 0 0 2px;
+}
+
+.record-value {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Session meta (History) */
+
+.session-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Workout logging */
+
+.workout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.set-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.remove-set {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.remove-set:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.add-set {
+  background: none;
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.add-set:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.notes-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* History */
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.session-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.session-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.session-date {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.session-notes {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.set-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.set-table th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding: 4px 8px 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.set-table td {
+  padding: 6px 8px 6px 0;
+  color: var(--color-text);
+}
+
+/* Exercises */
+
+.exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0 32px;
+}
+
+.exercise-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.exercise-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exercise-name {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.exercise-muscles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.exercise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exercise-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.mapping-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}

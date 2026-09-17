@@ -1,5 +1,17 @@
 -- Gym Recovery Tracker schema
 
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
+    bodyweight_lbs FLOAT NOT NULL,
+    height_inches FLOAT NOT NULL,
+    sex VARCHAR(20) NOT NULL,
+    training_experience VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE muscle_groups (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
@@ -22,7 +34,9 @@ CREATE TABLE exercise_muscle_groups (
 
 CREATE TABLE workout_sessions (
     id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     session_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    duration_minutes INT,
     notes TEXT
 );
 
