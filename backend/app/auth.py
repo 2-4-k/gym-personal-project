@@ -57,11 +57,14 @@ def signup():
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
+    name = (data.get("name") or "").strip()
 
     if not email or "@" not in email:
         return jsonify({"error": "A valid email is required"}), 400
     if len(password) < 8:
         return jsonify({"error": "Password must be at least 8 characters"}), 400
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
 
     try:
         bodyweight_lbs = float(data.get("bodyweight_lbs"))
@@ -87,6 +90,7 @@ def signup():
     user = User(
         email=email,
         password_hash=generate_password_hash(password),
+        name=name,
         bodyweight_lbs=bodyweight_lbs,
         height_inches=height_inches,
         sex=sex,

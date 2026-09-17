@@ -6,6 +6,7 @@ import ThemeToggle from "../components/ThemeToggle";
 export default function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [bodyweight, setBodyweight] = useState("");
@@ -25,6 +26,7 @@ export default function Signup() {
     setSubmitting(true);
     try {
       await signup(email, password, {
+        name,
         bodyweight_lbs: Number(bodyweight),
         height_inches: totalHeightInches,
         sex,
@@ -43,6 +45,10 @@ export default function Signup() {
       <ThemeToggle />
       <form className="auth-card" onSubmit={handleSubmit}>
         <h1>Create account</h1>
+        <label>
+          Name
+          <input value={name} onChange={(e) => setName(e.target.value)} required />
+        </label>
         <label>
           Email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
