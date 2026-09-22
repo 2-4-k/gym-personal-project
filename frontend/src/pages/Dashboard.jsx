@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMuscleStatus, getStats } from "../api";
 import { useAuth } from "../useAuth";
+import MuscleIcon from "../components/MuscleIcon";
 
 function MuscleCard({ muscle }) {
   const statusClass = muscle.ready ? "ready" : "recovering";
@@ -8,8 +9,11 @@ function MuscleCard({ muscle }) {
 
   return (
     <div className={`muscle-card ${statusClass}`}>
-      <p className="muscle-name">{muscle.name}</p>
-      <p className="muscle-status">{statusText}</p>
+      <MuscleIcon muscleName={muscle.name} ready={muscle.ready} />
+      <div>
+        <p className="muscle-name">{muscle.name}</p>
+        <p className="muscle-status">{statusText}</p>
+      </div>
     </div>
   );
 }
