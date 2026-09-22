@@ -85,23 +85,34 @@
 }
 
 .muscle-icon {
-  width: 34px;
-  height: 64px;
+  width: 44px;
+  height: 84px;
   flex-shrink: 0;
 }
 
 .muscle-icon-outline {
   fill: none;
   stroke: var(--color-border);
-  stroke-width: 3;
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.muscle-icon-decor {
+  fill: var(--color-text-muted);
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  opacity: 0.55;
 }
 
 .muscle-icon-region {
   fill: var(--color-warning);
+  stroke: var(--color-warning);
+  stroke-width: 1.5;
 }
 
 .muscle-icon.ready .muscle-icon-region {
   fill: var(--color-accent);
+  stroke: var(--color-accent);
 }
 
 .muscle-name {

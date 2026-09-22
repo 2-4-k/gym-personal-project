@@ -1,6 +1,12 @@
 // A minimal geometric body silhouette. Each muscle group highlights the
 // shapes roughly corresponding to its location; not anatomically precise,
 // just enough to make the card instantly recognizable at a glance.
+//
+// Front-of-body and back-of-body muscle groups share the same limb outline
+// (an arm silhouette looks the same from front or back), so a face is drawn
+// for front-view groups and a spine + shoulder blades for back-view ones —
+// otherwise pairs like biceps/triceps or quads/hamstrings would be visually
+// identical despite highlighting the same limb.
 
 const OUTLINE_SHAPES = [
   { tag: "circle", cx: 50, cy: 14, r: 9 },
@@ -14,6 +20,30 @@ const OUTLINE_SHAPES = [
   { tag: "rect", x: 37, y: 124, width: 11, height: 40, rx: 5 },
   { tag: "rect", x: 52, y: 124, width: 11, height: 40, rx: 5 },
 ];
+
+const FRONT_DECOR = [
+  { tag: "circle", cx: 46, cy: 12, r: 1.4 },
+  { tag: "circle", cx: 54, cy: 12, r: 1.4 },
+];
+
+const BACK_DECOR = [
+  { tag: "line", x1: 50, y1: 28, x2: 50, y2: 80 },
+  { tag: "ellipse", cx: 42, cy: 37, rx: 4.5, ry: 7 },
+  { tag: "ellipse", cx: 58, cy: 37, rx: 4.5, ry: 7 },
+];
+
+const MUSCLE_VIEW = {
+  Chest: "front",
+  Shoulders: "front",
+  Biceps: "front",
+  Core: "front",
+  Quads: "front",
+  Back: "back",
+  Triceps: "back",
+  Glutes: "back",
+  Hamstrings: "back",
+  Calves: "back",
+};
 
 const MUSCLE_REGIONS = {
   Chest: [{ tag: "rect", x: 35, y: 28, width: 30, height: 24, rx: 8 }],
@@ -47,19 +77,32 @@ const MUSCLE_REGIONS = {
 };
 
 function Shape({ shape }) {
-  if (shape.tag === "circle") {
-    return <circle cx={shape.cx} cy={shape.cy} r={shape.r} />;
+  switch (shape.tag) {
+    case "circle":
+      return <circle cx={shape.cx} cy={shape.cy} r={shape.r} />;
+    case "ellipse":
+      return <ellipse cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} />;
+    case "line":
+      return <line x1={shape.x1} y1={shape.y1} x2={shape.x2} y2={shape.y2} />;
+    default:
+      return <rect x={shape.x} y={shape.y} width={shape.width} height={shape.height} rx={shape.rx} />;
   }
-  return <rect x={shape.x} y={shape.y} width={shape.width} height={shape.height} rx={shape.rx} />;
 }
 
 export default function MuscleIcon({ muscleName, ready }) {
   const regions = MUSCLE_REGIONS[muscleName] || [];
+  const view = MUSCLE_VIEW[muscleName] || "front";
+  const decor = view === "front" ? FRONT_DECOR : BACK_DECOR;
 
   return (
     <svg viewBox="0 0 100 190" className={`muscle-icon ${ready ? "ready" : "recovering"}`} aria-hidden="true">
       <g className="muscle-icon-outline">
         {OUTLINE_SHAPES.map((shape, i) => (
+          <Shape key={i} shape={shape} />
+        ))}
+      </g>
+      <g className="muscle-icon-decor">
+        {decor.map((shape, i) => (
           <Shape key={i} shape={shape} />
         ))}
       </g>
